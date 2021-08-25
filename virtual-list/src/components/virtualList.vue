@@ -42,11 +42,20 @@ const visibleItems = computed(() => props.items.slice(start.value - Math.min(sta
 // viewport的ref
 const viewport = ref()
 // 滚动时计算start, end, offset
+// timer为节流定时器
+const timer = ref(null)
 const handleScroll = () => {
-  let scrollTop = viewport.value.scrollTop
-  start.value = Math.floor(scrollTop / props.size) * props.columns
-  end.value = start.value + props.remain
-  offset.value = start.value / props.columns * props.size - props.size * Math.min(start.value, props.preRender) / props.columns
+  if(!timer.value){
+    let scrollTop = viewport.value.scrollTop
+    start.value = Math.floor(scrollTop / props.size) * props.columns
+    end.value = start.value + props.remain
+    offset.value = start.value / props.columns * props.size - props.size * Math.min(start.value, props.preRender) / props.columns
+    timer.value = setTimeout(() => {
+      clearTimeout(timer.value)
+      timer.value = null
+    }, 10)
+  }
+  
 }
 // This starter template is using Vue 3 experimental <script setup> SFCs
 // Check out https://github.com/vuejs/rfcs/blob/master/active-rfcs/0040-script-setup.md
